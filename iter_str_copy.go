@@ -5,15 +5,14 @@ import (
 	"errors"
 )
 
+// ReadStringToWriter read string from iterator and copyt to bufio.Writer.
+// The []byte can not be kept, as it will change after next iterator call.
 func (iter *Iterator) ReadStringToWriter(writer *bufio.Writer) (err error) {
 	c := iter.nextToken()
 	if c == '"' {
 		counter := 0
 		for i := iter.head; i < iter.tail; i++ {
-			// require ascii string and no escape
-			// for: field name, base64, number
 			if iter.buf[i] == '"' {
-				// fast path: reuse the underlying buffer
 				_, err = writer.Write(iter.buf[iter.head:i])
 				if err != nil {
 					return err
